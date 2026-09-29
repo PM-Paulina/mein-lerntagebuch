@@ -1,0 +1,28 @@
+# CI-Workflow: prüft bei jedem Push und Pull Request alle Markdown-Dateien.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  markdown-check:
+    name: Markdown prüfen
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Markdown-Dateien prüfen
+        run: npx --yes markdownlint-cli2 "**/*.md"
+
+      - name: Tagebuch-Einträge zählen
+        run: |
+          anzahl=$(ls tag*.md 2>/dev/null | wc -l)
+          echo "Es gibt bereits $anzahl von 7 Tagebuch-Einträgen."
